@@ -1,6 +1,6 @@
 use actix_web::middleware::Logger;
 use actix_web::{App, HttpRequest};
-use crate::hub::AppStore;
+use crate::store::AppStore;
 
 fn ping(_req: &HttpRequest<AppStore>) -> &'static str {
     "Pong"

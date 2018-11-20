@@ -17,10 +17,12 @@ mod prelude {
     pub type Result<T, E = Error> = result::Result<T, E>;
 }
 
+#[macro_use]
+mod store;
+
 mod app;
 mod db;
 pub mod error;
-mod hub;
 
 use actix_web::server;
 use std::env;
