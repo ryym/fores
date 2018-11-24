@@ -2,6 +2,7 @@
 authors = ["ryym <ryym.64@gmail.com>"]
 name = "fores"
 version = "0.1.0"
+edition = "2018"
 
 [dependencies]
 actix-web = "0.7.13"
