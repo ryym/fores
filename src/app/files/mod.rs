@@ -11,7 +11,7 @@ use serde_derive::{Deserialize, Serialize};
 pub struct AddForm {
     path: String,
     name: String,
-    kind: i8,
+    kind: i8, // TODO: Use FileKind
 }
 
 #[derive(Debug, Serialize)]

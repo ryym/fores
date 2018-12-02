@@ -1,4 +1,4 @@
-use crate::mdl::{self, File, User};
+use crate::mdl::{self, File, FileKind, User};
 use crate::{db, prelude::*};
 use diesel::Connection;
 use serde_json::{json, Value as JsonValue};
@@ -10,15 +10,24 @@ pub trait AddDir: db::HaveConn {
     fn add_dir(&self, user: User, path: &str, name: String) -> Result<File> {
         let conn = self.conn();
         conn.transaction(|| {
-            let new_file = db::files::insert(conn, &mdl::NewFile { kind: 1, name })?;
+            let new_file = db::files::insert(
+                conn,
+                &mdl::NewFile {
+                    kind: FileKind::Dir,
+                    name,
+                },
+            )?;
+
             let (new_tree, parent_id) = add_dir(user.tree, path, &new_file)?;
 
-            let assoc = mdl::NewFileAssoc {
-                dir_id: parent_id,
-                child_id: new_file.id,
-                child_name: new_file.name.clone(),
-            };
-            db::files::associate(conn, &assoc)?;
+            db::files::associate(
+                conn,
+                &mdl::NewFileAssoc {
+                    dir_id: parent_id,
+                    child_id: new_file.id,
+                    child_name: new_file.name.clone(),
+                },
+            )?;
 
             db::users::update_tree(conn, user.id, &new_tree)?;
 
@@ -79,7 +88,7 @@ mod test {
             id: 3,
             created_at,
             updated_at: created_at,
-            kind: 0,
+            kind: FileKind::File,
             name: "c".to_owned(),
         };
         let (json, dir_id) = add_dir(json, "a/b", &new_file)?;
