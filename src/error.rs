@@ -74,6 +74,7 @@ impl From<DieselError> for Error {
         match err {
             DieselError::NotFound => err.context(ErrorKind::NotFound),
             _ => err.context(ErrorKind::Db),
-        }.into()
+        }
+        .into()
     }
 }

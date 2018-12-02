@@ -1,7 +1,7 @@
-use actix_web::{http::StatusCode, middleware::Response};
-use actix_web::{Error as ActixError, ResponseError};
-use actix_web::{HttpRequest, HttpResponse};
 use crate::prelude::*;
+use actix_web::http::StatusCode;
+use actix_web::HttpResponse;
+use actix_web::ResponseError;
 
 #[derive(Debug, Serialize)]
 struct ErrorResponse {

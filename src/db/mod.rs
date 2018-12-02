@@ -1,3 +1,6 @@
+pub mod files;
+pub mod users;
+
 use crate::prelude::*;
 use diesel::r2d2::{ConnectionManager, PooledConnection};
 

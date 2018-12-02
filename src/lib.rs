@@ -3,10 +3,16 @@
 #![allow(proc_macro_derive_resolution_fallback)]
 
 extern crate actix_web;
+#[macro_use]
 extern crate diesel;
+extern crate chrono;
 extern crate dotenv;
 extern crate env_logger;
 extern crate failure;
+extern crate log;
+#[macro_use]
+extern crate serde_derive;
+extern crate serde_json;
 
 mod prelude {
     use std::result;
@@ -21,8 +27,11 @@ mod prelude {
 mod store;
 
 mod app;
+mod auth;
 mod db;
 pub mod error;
+mod mdl;
+mod schema;
 
 use actix_web::server;
 use std::env;
@@ -35,12 +44,13 @@ pub fn run() -> prelude::Result<()> {
     let db_pool = db::new_pool(db_url)?;
 
     let port = env::var("PORT").unwrap_or("3000".to_owned());
-    println!("Starting server at 127.0.0.1:{}", port);
+    log::info!("Starting server at 127.0.0.1:{}", port);
 
     server::new(move || {
-        let store = hub::AppStore::create(db_pool.clone());
+        let store = store::AppStore::create(db_pool.clone());
         app::create(store)
-    }).bind(format!("127.0.0.1:{}", port))
+    })
+    .bind(format!("127.0.0.1:{}", port))
     .expect("start server")
     .run();
 
