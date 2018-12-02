@@ -1,3 +1,4 @@
+use crate::error::Error;
 use crate::prelude::*;
 use actix_web::http::StatusCode;
 use actix_web::HttpResponse;
