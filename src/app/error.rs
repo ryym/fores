@@ -2,6 +2,7 @@ use crate::prelude::*;
 use actix_web::http::StatusCode;
 use actix_web::HttpResponse;
 use actix_web::ResponseError;
+use serde_derive::Serialize;
 
 #[derive(Debug, Serialize)]
 struct ErrorResponse {

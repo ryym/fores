@@ -2,17 +2,10 @@
 // TODO: Remove this after diesel published 1.4.
 #![allow(proc_macro_derive_resolution_fallback)]
 
-extern crate actix_web;
+// This is necessary to use the `table_name` attribute
+// for model definitions.
 #[macro_use]
 extern crate diesel;
-extern crate chrono;
-extern crate dotenv;
-extern crate env_logger;
-extern crate failure;
-extern crate log;
-#[macro_use]
-extern crate serde_derive;
-extern crate serde_json;
 
 mod prelude {
     use std::result;

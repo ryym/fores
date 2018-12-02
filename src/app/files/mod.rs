@@ -5,6 +5,7 @@ use crate::auth::Auth;
 use crate::prelude::*;
 use crate::store::Store;
 use actix_web::{Json, State};
+use serde_derive::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize)]
 pub struct AddForm {
