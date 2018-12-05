@@ -8,7 +8,8 @@ macro_rules! enum_column {
         pub enum $name:ident { $($variant:ident = $val:expr,)* }
     ) => {
         use diesel::sql_types::SmallInt;
-        use diesel::types::{FromSql, ToSql};
+        use diesel::serialize::ToSql;
+        use diesel::deserialize::FromSql;
 
         $(#[$meta])*
         #[derive(FromSqlRow, AsExpression)]
@@ -21,7 +22,7 @@ macro_rules! enum_column {
             fn to_sql<W: std::io::Write>(
                 &self,
                 out: &mut diesel::serialize::Output<W, DB>,
-            ) -> Result<diesel::types::IsNull, Box<std::error::Error + Send + Sync>> {
+            ) -> Result<diesel::serialize::IsNull, Box<std::error::Error + Send + Sync>> {
                 ToSql::<SmallInt, DB>::to_sql(&(*self as i16), out)
             }
         }

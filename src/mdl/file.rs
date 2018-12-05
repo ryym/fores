@@ -1,16 +1,16 @@
 use crate::schema::{file_assocs, files};
 use chrono::NaiveDateTime;
-use serde_derive::Deserialize;
+use serde_derive::{Deserialize, Serialize};
 
 enum_column! {
-    #[derive(Debug, Clone, Copy, Deserialize)]
+    #[derive(Debug, Clone, Copy, Deserialize, Serialize)]
     pub enum FileKind {
         File = 0,
         Dir = 1,
     }
 }
 
-#[derive(Debug, Queryable)]
+#[derive(Debug, Queryable, Serialize)]
 pub struct File {
     pub id: i64,
     pub created_at: NaiveDateTime,

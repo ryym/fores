@@ -14,6 +14,8 @@ pub fn create(store: AppStore) -> App<AppStore> {
         .middleware(Logger::default())
         .resource("/_ping", |r| r.f(ping))
         .scope("/api", |scope| {
-            scope.resource("files", |r| r.post().with(files::add))
+            scope
+                .resource("files", |r| r.post().with(files::add))
+                .resource("files/list/{path:.*}", |r| r.get().with(files::list))
         })
 }
