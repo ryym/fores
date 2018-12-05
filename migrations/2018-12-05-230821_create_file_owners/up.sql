@@ -1,0 +1,9 @@
+CREATE TABLE file_owners (
+  id BIGSERIAL PRIMARY KEY,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  file_id BIGINT NOT NULL REFERENCES files (id),
+  owner_id BIGINT NOT NULL REFERENCES users (id),
+
+  UNIQUE (file_id, owner_id)
+);

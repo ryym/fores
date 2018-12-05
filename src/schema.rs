@@ -10,6 +10,16 @@ table! {
 }
 
 table! {
+    file_owners (id) {
+        id -> Int8,
+        created_at -> Timestamp,
+        updated_at -> Timestamp,
+        file_id -> Int8,
+        owner_id -> Int8,
+    }
+}
+
+table! {
     files (id) {
         id -> Int8,
         created_at -> Timestamp,
@@ -29,4 +39,12 @@ table! {
     }
 }
 
-allow_tables_to_appear_in_same_query!(file_assocs, files, users,);
+joinable!(file_owners -> files (file_id));
+joinable!(file_owners -> users (owner_id));
+
+allow_tables_to_appear_in_same_query!(
+    file_assocs,
+    file_owners,
+    files,
+    users,
+);
