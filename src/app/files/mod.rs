@@ -4,7 +4,7 @@ mod list;
 use self::add_dir::AddDir;
 use self::list::ListFiles;
 use crate::auth::Auth;
-use crate::mdl::File;
+use crate::mdl::{File, FileKind};
 use crate::prelude::*;
 use crate::store::Store;
 use actix_web::{Json, Path, State};
@@ -14,7 +14,7 @@ use serde_derive::{Deserialize, Serialize};
 pub struct AddForm {
     path: String,
     name: String,
-    kind: i8, // TODO: Use FileKind
+    kind: FileKind,
 }
 
 #[derive(Debug, Serialize)]
