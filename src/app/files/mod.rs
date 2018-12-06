@@ -1,20 +1,21 @@
 mod add_dir;
+mod add_file;
 mod list;
 
 use self::add_dir::AddDir;
+use self::add_file::{AddFile, NewFile};
 use self::list::ListFiles;
 use crate::auth::Auth;
-use crate::mdl::{File, FileKind};
+use crate::mdl::File;
 use crate::prelude::*;
 use crate::store::Store;
 use actix_web::{Json, Path, State};
 use serde_derive::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize)]
-pub struct AddForm {
+pub struct AddDirForm {
     path: String,
     name: String,
-    kind: FileKind,
 }
 
 #[derive(Debug, Serialize)]
@@ -28,8 +29,22 @@ pub struct ListResult {
     files: Vec<File>,
 }
 
-pub fn add<S>(
-    (store, auth, form): (State<impl Store<Svc = S>>, Auth, Json<AddForm>),
+pub fn add_file<S>(
+    (store, auth, form): (State<impl Store<Svc = S>>, Auth, Json<NewFile>),
+) -> Result<Json<AddResult>>
+where
+    S: AddFile,
+{
+    let svc = store.service()?;
+    let file = svc.add_file(&auth.user, form.into_inner())?;
+    Ok(Json(AddResult {
+        id: file.id,
+        name: file.name,
+    }))
+}
+
+pub fn add_dir<S>(
+    (store, auth, form): (State<impl Store<Svc = S>>, Auth, Json<AddDirForm>),
 ) -> Result<Json<AddResult>>
 where
     S: AddDir,

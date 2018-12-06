@@ -3,7 +3,7 @@ use chrono::NaiveDateTime;
 use serde_derive::{Deserialize, Serialize};
 
 enum_column! {
-    #[derive(Debug, Clone, Copy, Deserialize, Serialize)]
+    #[derive(Debug, Clone, Copy, PartialEq, Deserialize, Serialize)]
     pub enum FileKind {
         File = 0,
         Dir = 1,

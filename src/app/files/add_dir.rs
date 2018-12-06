@@ -12,6 +12,7 @@ pub trait AddDir: db::HaveConn {
         conn.transaction(|| {
             let new_file = db::files::insert(
                 conn,
+                user.id,
                 &mdl::NewFile {
                     kind: FileKind::Dir,
                     name,
