@@ -1,5 +1,6 @@
 mod add_dir;
 mod add_file;
+mod find_dir;
 mod list;
 
 use self::add_dir::AddDir;
