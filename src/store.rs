@@ -33,9 +33,3 @@ impl db::HaveConn for Hub {
         &self.conn
     }
 }
-
-macro_rules! register_service {
-    ($trait:ident) => {
-        impl $trait for crate::store::Hub {}
-    };
-}
