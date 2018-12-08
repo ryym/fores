@@ -4,10 +4,10 @@ use crate::{db, prelude::*};
 use diesel::Connection;
 use serde_json::json;
 
-register_service!(AddDir);
+register_service!(MakeDir);
 
-pub trait AddDir: ModifyDir + db::HaveConn {
-    fn add_dir(&self, mut user: User, path: &str, name: String) -> Result<File> {
+pub trait MakeDir: ModifyDir + db::HaveConn {
+    fn make_dir(&self, mut user: User, path: &str, name: String) -> Result<File> {
         let conn = self.conn();
         conn.transaction(|| {
             let new_file = db::files::insert(

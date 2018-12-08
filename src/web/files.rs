@@ -41,10 +41,10 @@ pub fn add_dir<S>(
     (store, auth, form): (State<impl Store<Svc = S>>, Auth, Json<AddDirForm>),
 ) -> Result<Json<AddResult>>
 where
-    S: files::AddDir,
+    S: files::MakeDir,
 {
     let svc = store.service()?;
-    let file = svc.add_dir(auth.user, &form.path, form.name.clone())?;
+    let file = svc.make_dir(auth.user, &form.path, form.name.clone())?;
     Ok(Json(AddResult {
         id: file.id,
         name: file.name,
