@@ -19,6 +19,16 @@ pub struct File {
     pub name: String,
 }
 
+#[derive(Debug, Queryable)]
+pub struct FileAssoc {
+    pub id: i64,
+    pub created_at: NaiveDateTime,
+    pub updated_at: NaiveDateTime,
+    pub dir_id: i64,
+    pub child_id: i64,
+    pub child_name: String,
+}
+
 #[derive(Debug, Insertable)]
 #[table_name = "files"]
 pub struct NewFile {

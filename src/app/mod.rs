@@ -15,6 +15,7 @@ pub fn create(store: AppStore) -> App<AppStore> {
         .resource("/_ping", |r| r.f(ping))
         .scope("/api", |scope| {
             scope
+                .resource("files", |r| r.delete().with(files::delete))
                 .resource("files/file", |r| r.post().with(files::add_file))
                 .resource("files/dir", |r| r.post().with(files::add_dir))
                 .resource("files/list/{path:.*}", |r| r.get().with(files::list))

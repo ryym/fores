@@ -1,10 +1,13 @@
 mod add_dir;
 mod add_file;
+mod delete;
 mod find_dir;
 mod list;
+mod replace_dir;
 
 use self::add_dir::AddDir;
 use self::add_file::{AddFile, NewFile};
+use self::delete::{Delete, DeleteForm};
 use self::list::ListFiles;
 use crate::auth::Auth;
 use crate::mdl::File;
@@ -67,4 +70,15 @@ where
     let svc = store.service()?;
     let files = svc.list_files(&auth.user, &path)?;
     Ok(Json(ListResult { files }))
+}
+
+pub fn delete<S>(
+    (store, auth, form): (State<impl Store<Svc = S>>, Auth, Json<DeleteForm>),
+) -> Result<Json<()>>
+where
+    S: Delete,
+{
+    let svc = store.service()?;
+    svc.delete(auth.user, &form)?;
+    Ok(Json(()))
 }
