@@ -25,7 +25,7 @@ pub trait Delete: DeleteDir + DeleteFile {
 
 pub trait DeleteDir: ModifyDir + db::HaveConn {
     fn delete_dir(&self, mut user: mdl::User, path: &str) -> Result<()> {
-        let (keys, dir_name) = split_path(path).ok_or_else(|| Error::invalid("invalid path"))?;
+        let (keys, dir_name) = split_path(path)?;
         let parent_path = keys.join("/");
 
         let dir_id = self.modify_dir(&mut user.tree, &parent_path, |parent| {
@@ -53,7 +53,7 @@ pub trait DeleteFile: FindDir + db::HaveConn {
     fn delete_file(&self, user: &mdl::User, path: &str) -> Result<()> {
         use crate::schema::files;
 
-        let (keys, file_name) = split_path(path).ok_or_else(|| Error::invalid("invalid path"))?;
+        let (keys, file_name) = split_path(path)?;
         let dir_id = self.find_dir(user, &keys.join("/"))?;
         let assoc = find_assoc(self.conn(), dir_id, &file_name)?;
 

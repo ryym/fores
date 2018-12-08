@@ -2,14 +2,13 @@ use crate::auth::Auth;
 use crate::mdl::File;
 use crate::prelude::*;
 use crate::store::Store;
-use crate::svc::files;
+use crate::svc::{self, files};
 use actix_web::{Json, Path, State};
 use serde_derive::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize)]
-pub struct AddDirForm {
-    path: String,
-    name: String,
+pub struct AddFileForm {
+    content: String,
 }
 
 #[derive(Debug, Serialize)]
@@ -24,27 +23,43 @@ pub struct ListResult {
 }
 
 pub fn add_file<S>(
-    (store, auth, form): (State<impl Store<Svc = S>>, Auth, Json<files::NewFile>),
+    (store, auth, path, form): (
+        State<impl Store<Svc = S>>,
+        Auth,
+        Path<String>,
+        Json<AddFileForm>,
+    ),
 ) -> Result<Json<AddResult>>
 where
-    S: files::AddFile,
+    S: files::Store,
 {
     let svc = store.service()?;
-    let file = svc.add_file(&auth.user, form.into_inner())?;
+    let (keys, name) = svc::tree::split_path(&path)?;
+    let form = form.into_inner();
+    let file = svc.store_file(
+        &auth.user,
+        files::StoreForm {
+            path: keys.join("/"),
+            name: name.to_string(),
+            content: form.content,
+        },
+    )?;
+
     Ok(Json(AddResult {
         id: file.id,
         name: file.name,
     }))
 }
 
-pub fn add_dir<S>(
-    (store, auth, form): (State<impl Store<Svc = S>>, Auth, Json<AddDirForm>),
+pub fn make_dir<S>(
+    (store, auth, path): (State<impl Store<Svc = S>>, Auth, Path<String>),
 ) -> Result<Json<AddResult>>
 where
     S: files::MakeDir,
 {
     let svc = store.service()?;
-    let file = svc.make_dir(auth.user, &form.path, form.name.clone())?;
+    let (keys, name) = svc::tree::split_path(&path)?;
+    let file = svc.make_dir(auth.user, &keys.join("/"), name.to_string())?;
     Ok(Json(AddResult {
         id: file.id,
         name: file.name,

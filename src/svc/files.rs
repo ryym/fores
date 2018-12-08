@@ -1,6 +1,6 @@
-mod add_file;
 mod delete;
 mod list;
 mod make_dir;
+mod store;
 
-pub use self::{add_file::*, delete::*, list::*, make_dir::*};
+pub use self::{delete::*, list::*, make_dir::*, store::*};

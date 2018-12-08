@@ -16,8 +16,8 @@ pub fn create_app(store: AppStore) -> App<AppStore> {
         .scope("/api", |scope| {
             scope
                 .resource("files", |r| r.delete().with(files::delete))
-                .resource("files/file", |r| r.post().with(files::add_file))
-                .resource("files/dir", |r| r.post().with(files::add_dir))
+                .resource("files/file/{path:.*}", |r| r.post().with(files::add_file))
+                .resource("files/dir/{path:.*}", |r| r.post().with(files::make_dir))
                 .resource("files/list/{path:.*}", |r| r.get().with(files::list))
         })
 }
