@@ -25,7 +25,7 @@ pub trait AddFile: db::HaveConn {
             .first::<File>(conn)?;
 
         if dir.kind != FileKind::Dir {
-            return Err(ErrorKind::Misc("not dir".to_owned()).into());
+            return Err(Error::invalid("invalid path"));
         }
 
         conn.transaction(|| {

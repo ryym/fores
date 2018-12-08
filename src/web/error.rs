@@ -17,6 +17,7 @@ impl ResponseError for Error {
         match self.kind() {
             ErrorKind::Db => error_res(StatusCode::INTERNAL_SERVER_ERROR, vec![self.to_string()]),
             ErrorKind::NotFound => error_res(StatusCode::NOT_FOUND, vec![self.to_string()]),
+            ErrorKind::Invalid(msg) => error_res(StatusCode::BAD_REQUEST, vec![msg.clone()]),
             ErrorKind::Misc(msg) => error_res(StatusCode::INTERNAL_SERVER_ERROR, vec![msg.clone()]),
         }
     }

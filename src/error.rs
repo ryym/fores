@@ -18,6 +18,11 @@ pub enum ErrorKind {
     #[fail(display = "record not found")]
     NotFound,
 
+    /// Represents expected errors and intended to be displayed for users.
+    #[fail(display = "{}", _0)]
+    Invalid(String),
+
+    /// Represents other type of errors.
     #[fail(display = "{}", _0)]
     Misc(String),
 }
@@ -39,6 +44,10 @@ impl Display for Error {
 }
 
 impl Error {
+    pub fn invalid<S: Into<String>>(msg: S) -> Error {
+        ErrorKind::Invalid(msg.into()).into()
+    }
+
     pub fn kind(&self) -> &ErrorKind {
         self.inner.get_context()
     }

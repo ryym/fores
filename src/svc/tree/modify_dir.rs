@@ -8,7 +8,7 @@ pub trait ModifyDir {
     where
         F: FnOnce(&mut JsonValue) -> Result<T>,
     {
-        let keys = path.split("/").filter(|s| s.len() > 0).collect::<Vec<_>>();
+        let keys = super::path_to_vec(path);
         modify_dir(&mut tree, keys.into_iter(), f)
     }
 }
@@ -22,7 +22,7 @@ where
         Some(key) => {
             let mut child = match obj.get_mut(key) {
                 Some(child) => child,
-                None => return Err(ErrorKind::Misc("invalid path".to_owned()).into()),
+                None => return Err(Error::invalid("invalid path")),
             };
             Ok(modify_dir(&mut child, keys, f)?)
         }

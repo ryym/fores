@@ -8,10 +8,9 @@
 extern crate diesel;
 
 mod prelude {
-    use crate::error::Error;
     use std::result;
 
-    pub use crate::error::ErrorKind;
+    pub use crate::error::{Error, ErrorKind};
     pub use failure::{Fail, ResultExt};
 
     pub type Result<T, E = Error> = result::Result<T, E>;

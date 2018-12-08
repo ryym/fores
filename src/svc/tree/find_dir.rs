@@ -6,7 +6,7 @@ register_service!(FindDir);
 
 pub trait FindDir {
     fn find_dir(&self, user: &mdl::User, path: &str) -> Result<i64> {
-        let keys = path.split("/").filter(|s| s.len() > 0).collect::<Vec<_>>();
+        let keys = super::path_to_vec(path);
         find_dir(&user.tree, keys.into_iter())
     }
 }
@@ -18,10 +18,10 @@ where
     match keys.next() {
         Some(key) => match tree.get(key) {
             Some(inner) => find_dir(inner, keys),
-            None => Err(ErrorKind::Misc("invalid path".to_owned()).into()),
+            None => Err(Error::invalid("invalid path")),
         },
         None => {
-            let dir_id = serde_json::from_value(tree["..id"].clone()).unwrap();
+            let dir_id = tree["..id"].as_i64().unwrap();
             Ok(dir_id)
         }
     }
