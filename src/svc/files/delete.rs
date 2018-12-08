@@ -1,27 +1,9 @@
-use crate::mdl::FileKind;
 use crate::svc::tree::{split_path, FindDir, ModifyDir};
 use crate::{db, mdl, prelude::*};
 use diesel::prelude::*;
-use serde_derive::Deserialize;
 
-register_service!(Delete);
 register_service!(DeleteDir);
 register_service!(DeleteFile);
-
-#[derive(Debug, Deserialize)]
-pub struct DeleteForm {
-    path: String,
-    kind: FileKind,
-}
-
-pub trait Delete: DeleteDir + DeleteFile {
-    fn delete(&self, user: mdl::User, form: &DeleteForm) -> Result<()> {
-        match form.kind {
-            FileKind::File => self.delete_file(&user, &form.path),
-            FileKind::Dir => self.delete_dir(user, &form.path),
-        }
-    }
-}
 
 pub trait DeleteDir: ModifyDir + db::HaveConn {
     fn delete_dir(&self, mut user: mdl::User, path: &str) -> Result<()> {
