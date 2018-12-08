@@ -20,12 +20,13 @@ mod prelude {
 #[macro_use]
 mod store;
 
-mod app;
 mod auth;
 mod db;
 pub mod error;
 mod mdl;
 mod schema;
+mod svc;
+mod web;
 
 use actix_web::server;
 use std::env;
@@ -42,7 +43,7 @@ pub fn run() -> prelude::Result<()> {
 
     server::new(move || {
         let store = store::AppStore::create(db_pool.clone());
-        app::create(store)
+        web::create_app(store)
     })
     .bind(format!("127.0.0.1:{}", port))
     .expect("start server")

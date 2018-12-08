@@ -1,18 +1,8 @@
-mod add_dir;
-mod add_file;
-mod delete;
-mod find_dir;
-mod list;
-mod replace_dir;
-
-use self::add_dir::AddDir;
-use self::add_file::{AddFile, NewFile};
-use self::delete::{Delete, DeleteForm};
-use self::list::ListFiles;
 use crate::auth::Auth;
 use crate::mdl::File;
 use crate::prelude::*;
 use crate::store::Store;
+use crate::svc::files;
 use actix_web::{Json, Path, State};
 use serde_derive::{Deserialize, Serialize};
 
@@ -34,10 +24,10 @@ pub struct ListResult {
 }
 
 pub fn add_file<S>(
-    (store, auth, form): (State<impl Store<Svc = S>>, Auth, Json<NewFile>),
+    (store, auth, form): (State<impl Store<Svc = S>>, Auth, Json<files::NewFile>),
 ) -> Result<Json<AddResult>>
 where
-    S: AddFile,
+    S: files::AddFile,
 {
     let svc = store.service()?;
     let file = svc.add_file(&auth.user, form.into_inner())?;
@@ -51,7 +41,7 @@ pub fn add_dir<S>(
     (store, auth, form): (State<impl Store<Svc = S>>, Auth, Json<AddDirForm>),
 ) -> Result<Json<AddResult>>
 where
-    S: AddDir,
+    S: files::AddDir,
 {
     let svc = store.service()?;
     let file = svc.add_dir(auth.user, &form.path, form.name.clone())?;
@@ -65,7 +55,7 @@ pub fn list<S>(
     (store, auth, path): (State<impl Store<Svc = S>>, Auth, Path<String>),
 ) -> Result<Json<ListResult>>
 where
-    S: ListFiles,
+    S: files::ListFiles,
 {
     let svc = store.service()?;
     let files = svc.list_files(&auth.user, &path)?;
@@ -73,10 +63,10 @@ where
 }
 
 pub fn delete<S>(
-    (store, auth, form): (State<impl Store<Svc = S>>, Auth, Json<DeleteForm>),
+    (store, auth, form): (State<impl Store<Svc = S>>, Auth, Json<files::DeleteForm>),
 ) -> Result<Json<()>>
 where
-    S: Delete,
+    S: files::Delete,
 {
     let svc = store.service()?;
     svc.delete(auth.user, &form)?;

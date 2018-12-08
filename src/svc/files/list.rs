@@ -1,5 +1,5 @@
-use super::find_dir::FindDir;
 use crate::mdl::{File, User};
+use crate::svc::tree::FindDir;
 use crate::{db, prelude::*};
 use diesel::prelude::*;
 

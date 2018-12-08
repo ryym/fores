@@ -1,6 +1,5 @@
-use super::find_dir::FindDir;
-use super::replace_dir::ReplaceDir;
 use crate::mdl::FileKind;
+use crate::svc::tree::{FindDir, ModifyDir};
 use crate::{db, mdl, prelude::*};
 use diesel::prelude::*;
 use serde_derive::Deserialize;
@@ -24,12 +23,12 @@ pub trait Delete: DeleteDir + DeleteFile {
     }
 }
 
-pub trait DeleteDir: ReplaceDir + db::HaveConn {
+pub trait DeleteDir: ModifyDir + db::HaveConn {
     fn delete_dir(&self, mut user: mdl::User, path: &str) -> Result<()> {
         let (keys, dir_name) = split_path(path)?;
         let parent_path = keys.join("/");
 
-        let dir_id = self.replace_dir(&mut user.tree, &parent_path, |parent| {
+        let dir_id = self.modify_dir(&mut user.tree, &parent_path, |parent| {
             let parent = parent.as_object_mut().unwrap();
             let obj = match parent.get(dir_name) {
                 Some(obj) => obj,
