@@ -34,7 +34,7 @@ pub trait DeleteDir: ModifyDir + db::HaveConn {
                 Some(obj) => obj,
                 None => return Err(ErrorKind::Misc("invalid path".to_owned()).into()),
             };
-            let dir_id: i64 = serde_json::from_value(obj["..id"].clone()).unwrap();
+            let dir_id = obj["..id"].as_i64().unwrap();
             parent.remove(dir_name);
             Ok(dir_id)
         })?;
