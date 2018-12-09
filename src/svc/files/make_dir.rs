@@ -1,4 +1,4 @@
-use crate::mdl::{self, File, FileKind, User};
+use crate::mdl::{self, File, User};
 use crate::svc::tree::ModifyDir;
 use crate::{db, prelude::*};
 use diesel::Connection;
@@ -10,11 +10,10 @@ pub trait MakeDir: ModifyDir + db::HaveConn {
     fn make_dir(&self, mut user: User, path: &str, name: String) -> Result<File> {
         let conn = self.conn();
         conn.transaction(|| {
-            let new_file = db::files::insert(
+            let new_file = db::files::insert_dir(
                 conn,
-                user.id,
-                &mdl::NewFile {
-                    kind: FileKind::Dir,
+                db::files::InsertDir {
+                    owner_id: user.id,
                     name,
                 },
             )?;

@@ -1,4 +1,4 @@
-use crate::schema::{file_assocs, files};
+use crate::schema::{file_assocs, file_contents, files};
 use chrono::NaiveDateTime;
 use serde_derive::{Deserialize, Serialize};
 
@@ -19,6 +19,13 @@ pub struct File {
     pub name: String,
 }
 
+#[derive(Debug, Insertable)]
+#[table_name = "files"]
+pub struct NewFile {
+    pub kind: FileKind,
+    pub name: String,
+}
+
 #[derive(Debug, Queryable)]
 pub struct FileAssoc {
     pub id: i64,
@@ -30,16 +37,16 @@ pub struct FileAssoc {
 }
 
 #[derive(Debug, Insertable)]
-#[table_name = "files"]
-pub struct NewFile {
-    pub kind: FileKind,
-    pub name: String,
-}
-
-#[derive(Debug, Insertable)]
 #[table_name = "file_assocs"]
 pub struct NewFileAssoc {
     pub dir_id: i64,
     pub child_id: i64,
     pub child_name: String,
+}
+
+#[derive(Debug, Insertable)]
+#[table_name = "file_contents"]
+pub struct NewFileContent {
+    pub file_id: i64,
+    pub content: String,
 }

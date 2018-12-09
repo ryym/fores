@@ -24,11 +24,23 @@ pub trait Create: FindDir + db::HaveConn {
             dir.id
         );
 
-        let new_file = &mdl::NewFile {
-            kind: mdl::FileKind::File,
+        let new_file = db::files::InsertFile {
+            owner_id: user.id,
             name: form.name,
+            content: form.content,
         };
-        save_file(conn, user, dir.id, &new_file)
+        conn.transaction(|| {
+            let file = db::files::insert_file(conn, new_file)?;
+
+            let assoc = mdl::NewFileAssoc {
+                dir_id,
+                child_id: file.id,
+                child_name: file.name.clone(),
+            };
+            db::files::associate(conn, &assoc)?;
+
+            Ok(file)
+        })
     }
 }
 
@@ -43,26 +55,4 @@ fn find_dir_record(conn: &db::Conn, user: &mdl::User, dir_id: i64) -> Result<mdl
         .filter(file_owners::owner_id.eq(user.id))
         .first::<mdl::File>(conn)
         .map_err(Into::into)
-}
-
-fn save_file(
-    conn: &db::Conn,
-    user: &mdl::User,
-    dir_id: i64,
-    new_file: &mdl::NewFile,
-) -> Result<mdl::File> {
-    conn.transaction(|| {
-        let file = db::files::insert(conn, user.id, new_file)?;
-
-        db::files::associate(
-            conn,
-            &mdl::NewFileAssoc {
-                dir_id,
-                child_id: file.id,
-                child_name: file.name.clone(),
-            },
-        )?;
-
-        Ok(file)
-    })
 }
