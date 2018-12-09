@@ -2,17 +2,17 @@ use crate::svc::tree::FindDir;
 use crate::{db, mdl, prelude::*};
 use diesel::Connection;
 
-register_service!(Store);
+register_service!(Create);
 
 #[derive(Debug)]
-pub struct StoreForm {
+pub struct CreateForm {
     pub path: String,
     pub name: String,
     pub content: String,
 }
 
-pub trait Store: FindDir + db::HaveConn {
-    fn store_file(&self, user: &mdl::User, form: StoreForm) -> Result<mdl::File> {
+pub trait Create: FindDir + db::HaveConn {
+    fn create_file(&self, user: &mdl::User, form: CreateForm) -> Result<mdl::File> {
         let dir_id = self.find_dir(user, &form.path)?;
         let conn = self.conn();
 

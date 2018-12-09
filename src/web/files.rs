@@ -30,7 +30,7 @@ pub fn create<S>(
     ),
 ) -> Result<Json<CreateResult>>
 where
-    S: files::MakeDir + files::Store,
+    S: files::MakeDir + files::Create,
 {
     let svc = store.service()?;
     let (keys, name) = svc::tree::split_path(&path)?;
@@ -38,9 +38,9 @@ where
 
     let file = match form.into_inner() {
         CreateForm::Dir => svc.make_dir(auth.user, &path, name.to_string())?,
-        CreateForm::File { content } => svc.store_file(
+        CreateForm::File { content } => svc.create_file(
             &auth.user,
-            files::StoreForm {
+            files::CreateForm {
                 path,
                 name: name.to_string(),
                 content,
