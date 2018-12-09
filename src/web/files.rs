@@ -1,5 +1,4 @@
 use crate::auth::Auth;
-use crate::mdl::File;
 use crate::prelude::*;
 use crate::store::Store;
 use crate::svc::{self, files};
@@ -9,7 +8,7 @@ use serde_derive::{Deserialize, Serialize};
 // Create
 
 #[derive(Debug, Deserialize)]
-#[serde(tag = "type")]
+#[serde(tag = "kind")]
 pub enum CreateForm {
     Dir,
     File { content: String },
@@ -54,28 +53,23 @@ where
     }))
 }
 
-// List
+// Get
 
-#[derive(Debug, Serialize)]
-pub struct ListResult {
-    files: Vec<File>,
-}
-
-pub fn list<S>(
+pub fn get<S>(
     (store, auth, path): (State<impl Store<Svc = S>>, Auth, Path<String>),
-) -> Result<Json<ListResult>>
+) -> Result<Json<files::FileContent>>
 where
-    S: files::ListFiles,
+    S: files::Get,
 {
     let svc = store.service()?;
-    let files = svc.list_files(&auth.user, &path)?;
-    Ok(Json(ListResult { files }))
+    let content = svc.get_file_content(&auth.user, &path)?;
+    Ok(Json(content))
 }
 
 // Delete
 
 #[derive(Debug, Deserialize)]
-#[serde(tag = "type")]
+#[serde(tag = "kind")]
 pub enum DeleteForm {
     Dir,
     File,

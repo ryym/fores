@@ -1,6 +1,6 @@
 mod create;
 mod delete;
-mod list;
+mod get;
 mod make_dir;
 
-pub use self::{create::*, delete::*, list::*, make_dir::*};
+pub use self::{create::*, delete::*, get::*, make_dir::*};
