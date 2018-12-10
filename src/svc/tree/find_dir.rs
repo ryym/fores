@@ -20,9 +20,6 @@ where
             Some(inner) => find_dir(inner, keys),
             None => Err(Error::invalid("invalid path")),
         },
-        None => {
-            let dir_id = tree["..id"].as_i64().unwrap();
-            Ok(dir_id)
-        }
+        None => Ok(super::get_dir_id(tree)),
     }
 }

@@ -1,5 +1,5 @@
 use crate::mdl::{self, File, User};
-use crate::svc::tree::ModifyDir;
+use crate::svc::tree::{get_dir_id, ModifyDir};
 use crate::{db, prelude::*};
 use diesel::Connection;
 use serde_json::json;
@@ -20,8 +20,7 @@ pub trait MakeDir: ModifyDir + db::HaveConn {
 
             let parent_id = self.modify_dir(&mut user.tree, path, |obj| {
                 obj[&new_file.name] = json!({ "..id": new_file.id });
-                let parent_id = obj["..id"].as_i64().unwrap();
-                Ok(parent_id)
+                Ok(get_dir_id(obj))
             })?;
 
             db::files::associate(

@@ -1,4 +1,4 @@
-use crate::svc::tree::{split_path, FindDir, ModifyDir};
+use crate::svc::tree::{get_dir_id, split_path, FindDir, ModifyDir};
 use crate::{db, mdl, prelude::*};
 use diesel::prelude::*;
 
@@ -16,7 +16,7 @@ pub trait DeleteDir: ModifyDir + db::HaveConn {
                 Some(obj) => obj,
                 None => return Err(Error::invalid("invalid path")),
             };
-            let dir_id = obj["..id"].as_i64().unwrap();
+            let dir_id = get_dir_id(obj);
             parent.remove(dir_name);
             Ok(dir_id)
         })?;
