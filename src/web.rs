@@ -14,10 +14,14 @@ pub fn create_app(store: AppStore) -> App<AppStore> {
         .middleware(Logger::default())
         .resource("/_ping", |r| r.f(ping))
         .scope("/api", |scope| {
-            scope.resource("files/file/{path:.*}", |r| {
-                r.get().with(files::get);
-                r.post().with(files::create);
-                r.delete().with(files::delete)
-            })
+            scope
+                .resource("files/file/{path:.*}", |r| {
+                    r.get().with(files::get);
+                    r.post().with(files::create);
+                    r.delete().with(files::delete)
+                })
+                .resource("files/move/{path:.*}", |r| {
+                    r.post().with(files::moves);
+                })
         })
 }

@@ -66,6 +66,35 @@ where
     Ok(Json(content))
 }
 
+// Move
+
+#[derive(Debug, Deserialize)]
+pub struct MoveForm {
+    dest: String,
+}
+
+pub fn moves<S>(
+    (store, auth, path, form): (
+        State<impl Store<Svc = S>>,
+        Auth,
+        Path<String>,
+        Json<MoveForm>,
+    ),
+) -> Result<Json<()>>
+where
+    S: files::Move,
+{
+    let svc = store.service()?;
+    svc.move_file(
+        auth.user,
+        files::MoveForm {
+            src: &path,
+            dest: &form.dest,
+        },
+    )?;
+    Ok(Json(()))
+}
+
 // Delete
 
 #[derive(Debug, Deserialize)]

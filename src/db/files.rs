@@ -88,6 +88,20 @@ pub fn associate(conn: &db::Conn, parent_id: i64, file: &File) -> Result<()> {
     Ok(())
 }
 
+#[derive(Debug)]
+pub struct Dessociate {
+    pub parent_id: i64,
+    pub child_id: i64,
+}
+
+pub fn dessociate(conn: &db::Conn, form: &Dessociate) -> Result<()> {
+    let q = file_assocs::table
+        .filter(file_assocs::dir_id.eq(form.parent_id))
+        .filter(file_assocs::child_id.eq(form.child_id));
+    diesel::delete(q).execute(conn)?;
+    Ok(())
+}
+
 pub fn delete(conn: &db::Conn, file_id: i64) -> Result<()> {
     diesel::delete(files::table.filter(files::id.eq(file_id))).execute(conn)?;
     Ok(())
