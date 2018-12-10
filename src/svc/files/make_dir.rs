@@ -1,4 +1,4 @@
-use crate::mdl::{self, File, User};
+use crate::mdl::{File, User};
 use crate::svc::tree::{get_dir_id, ModifyDir};
 use crate::{db, prelude::*};
 use diesel::Connection;
@@ -23,15 +23,7 @@ pub trait MakeDir: ModifyDir + db::HaveConn {
                 Ok(get_dir_id(obj))
             })?;
 
-            db::files::associate(
-                conn,
-                &mdl::NewFileAssoc {
-                    dir_id: parent_id,
-                    child_id: new_file.id,
-                    child_name: new_file.name.clone(),
-                },
-            )?;
-
+            db::files::associate(conn, parent_id, &new_file)?;
             db::users::update_tree(conn, user.id, &user.tree)?;
 
             Ok(new_file)

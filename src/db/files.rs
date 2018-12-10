@@ -77,9 +77,13 @@ fn insert_content(conn: &db::Conn, new_content: &NewFileContent) -> Result<()> {
     Ok(())
 }
 
-pub fn associate(conn: &db::Conn, assoc: &NewFileAssoc) -> Result<()> {
+pub fn associate(conn: &db::Conn, parent_id: i64, file: &File) -> Result<()> {
     diesel::insert_into(file_assocs::table)
-        .values(assoc)
+        .values(NewFileAssoc {
+            dir_id: parent_id,
+            child_id: file.id,
+            child_name: file.name.clone(),
+        })
         .execute(conn)?;
     Ok(())
 }

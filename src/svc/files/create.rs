@@ -29,16 +29,10 @@ pub trait Create: FindDir + db::HaveConn {
             name: form.name,
             content: form.content,
         };
+
         conn.transaction(|| {
             let file = db::files::insert_file(conn, new_file)?;
-
-            let assoc = mdl::NewFileAssoc {
-                dir_id,
-                child_id: file.id,
-                child_name: file.name.clone(),
-            };
-            db::files::associate(conn, &assoc)?;
-
+            db::files::associate(conn, dir_id, &file)?;
             Ok(file)
         })
     }
