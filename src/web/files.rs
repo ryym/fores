@@ -122,3 +122,21 @@ where
     }?;
     Ok(Json(()))
 }
+
+// All
+
+#[derive(Debug, Serialize)]
+pub struct AllResult {
+    pub paths: Vec<String>,
+}
+
+pub fn all<S>(
+    (store, auth, path): (State<impl Store<Svc = S>>, Auth, Path<String>),
+) -> Result<Json<AllResult>>
+where
+    S: files::AllFiles,
+{
+    let svc = store.service()?;
+    let paths = svc.all_file_names(&auth.user, &path)?;
+    Ok(Json(AllResult { paths }))
+}

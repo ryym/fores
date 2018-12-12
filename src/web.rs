@@ -23,5 +23,8 @@ pub fn create_app(store: AppStore) -> App<AppStore> {
                 .resource("files/move/{path:.*}", |r| {
                     r.post().with(files::moves);
                 })
+                .resource("files/all/{path:.*}", |r| {
+                    r.get().with(files::all);
+                })
         })
 }
