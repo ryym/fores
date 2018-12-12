@@ -1,5 +1,5 @@
 use crate::schema::{file_assocs, file_contents, files};
-use crate::svc::tree::{split_path_opt, FindDir};
+use crate::svc::tree::{split_path_opt, FindDirId};
 use crate::{db, mdl, prelude::*};
 use diesel::prelude::*;
 use serde_derive::Serialize;
@@ -34,17 +34,17 @@ impl FileContent {
     }
 }
 
-pub trait Get: FindDir + db::HaveConn {
+pub trait Get: FindDirId + db::HaveConn {
     fn get_file_content(&self, user: &mdl::User, path: &str) -> Result<FileContent> {
         let conn = self.conn();
 
         let (file, content) = match split_path_opt(path) {
             Some((keys, name)) => {
-                let parent_id = self.find_dir(&user, &keys.join("/"))?;
+                let parent_id = self.find_dir_id(&user, &keys.join("/"))?;
                 find_file_with_content(conn, parent_id, name)?
             }
             None => {
-                let root_id = self.find_dir(&user, "")?;
+                let root_id = self.find_dir_id(&user, "")?;
                 let file = files::table.filter(files::id.eq(root_id)).first(conn)?;
                 (file, None)
             }

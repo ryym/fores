@@ -1,4 +1,4 @@
-use crate::svc::tree::FindDir;
+use crate::svc::tree::FindDirId;
 use crate::{db, mdl, prelude::*};
 use diesel::Connection;
 
@@ -11,9 +11,9 @@ pub struct CreateForm {
     pub content: String,
 }
 
-pub trait Create: FindDir + db::HaveConn {
+pub trait Create: FindDirId + db::HaveConn {
     fn create_file(&self, user: &mdl::User, form: CreateForm) -> Result<mdl::File> {
-        let dir_id = self.find_dir(user, &form.path)?;
+        let dir_id = self.find_dir_id(user, &form.path)?;
         let conn = self.conn();
 
         let dir = find_dir_record(conn, user, dir_id)?;

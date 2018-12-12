@@ -1,4 +1,4 @@
-use crate::svc::tree::{get_dir_id, split_path, FindDir, ModifyDir};
+use crate::svc::tree::{get_dir_id, split_path, FindDirId, ModifyDir};
 use crate::{db, mdl, prelude::*};
 use diesel::prelude::*;
 
@@ -31,12 +31,12 @@ pub trait DeleteDir: ModifyDir + db::HaveConn {
     }
 }
 
-pub trait DeleteFile: FindDir + db::HaveConn {
+pub trait DeleteFile: FindDirId + db::HaveConn {
     fn delete_file(&self, user: &mdl::User, path: &str) -> Result<()> {
         use crate::schema::files;
 
         let (keys, file_name) = split_path(path)?;
-        let dir_id = self.find_dir(user, &keys.join("/"))?;
+        let dir_id = self.find_dir_id(user, &keys.join("/"))?;
         let assoc = find_assoc(self.conn(), dir_id, &file_name)?;
 
         diesel::delete(files::table.filter(files::id.eq(assoc.child_id))).execute(self.conn())?;
