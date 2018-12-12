@@ -4,14 +4,14 @@ use std::collections::HashMap;
 
 register_service!(AllFiles);
 
-pub trait AllFiles: tree::ForEach + db::HaveConn {
-    // TODO: Enable to list all paths from a sub directory.
+pub trait AllFiles: tree::FindDir + tree::ForEach + db::HaveConn {
     /// Get all files under the specified path, except directories.
     fn all_file_names(&self, user: &mdl::User, path: &str) -> Result<Vec<String>> {
         let mut dir_ids = vec![];
         let mut id_to_path = HashMap::new();
 
-        self.for_each_tree(&user.tree, String::new(), |name, tree, path| {
+        let root = self.find_dir(user, path)?;
+        self.for_each_tree(root, String::new(), |name, tree, path| {
             let id = tree::get_dir_id(tree);
             dir_ids.push(id);
             let path = path + name + "/";
