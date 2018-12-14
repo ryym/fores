@@ -55,7 +55,7 @@ mod test {
         let mock = Mock {};
         let parent_id = mock.modify_dir(&mut json, "a/b", |obj| {
             obj["c"] = json!({ "..id": 3 });
-            Ok(super::get_dir_id(obj))
+            Ok(super::super::get_dir_id(obj))
         })?;
 
         let expected = json!({
