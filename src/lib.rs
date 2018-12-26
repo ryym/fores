@@ -37,7 +37,7 @@ pub fn run() -> prelude::Result<()> {
     let db_url = must_get_env_var("DATABASE_URL");
     let db_pool = db::new_pool(db_url)?;
 
-    let port = env::var("PORT").unwrap_or("3000".to_owned());
+    let port = env::var("PORT").unwrap_or_else(|_| "3000".to_owned());
     log::info!("Starting server at 127.0.0.1:{}", port);
 
     server::new(move || {
@@ -52,5 +52,5 @@ pub fn run() -> prelude::Result<()> {
 }
 
 fn must_get_env_var(key: &str) -> String {
-    env::var(key).expect(&format!("{} must be set", key))
+    env::var(key).unwrap_or_else(|_| panic!("{} must be set", key))
 }

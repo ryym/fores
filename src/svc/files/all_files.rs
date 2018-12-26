@@ -24,7 +24,7 @@ pub trait AllFiles: tree::FindDir + tree::ForEach + db::HaveConn {
         let mut paths = parent_with_names
             .into_iter()
             .map(|(parent_id, name)| {
-                let parent_path = id_to_path.get(&parent_id).unwrap();
+                let parent_path = &id_to_path[&parent_id];
                 parent_path.clone() + &name
             })
             .collect::<Vec<_>>();

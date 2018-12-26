@@ -53,7 +53,7 @@ pub trait Get: FindDirId + db::HaveConn {
         match file.kind {
             mdl::FileKind::File => {
                 // Should we consider the case that a file does not have a content?
-                let content = content.unwrap_or(String::new());
+                let content = content.unwrap_or_default();
                 Ok(FileContent::from_file(file, content))
             }
             mdl::FileKind::Dir => {
